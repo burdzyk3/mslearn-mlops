@@ -67,7 +67,7 @@ jobs:
 
       - name: Stream prod training job
         run: |
-          az ml job stream --name "${{ steps.train.outputs.job_name }}"
+          for i in $(seq 1 80); do S=$(az ml job show --name "${{ steps.train.outputs.job_name }}" --query status -o tsv); echo "Status: $S"; case "$S" in Completed) exit 0;; Failed|Canceled) exit 1;; esac; sleep 30; done; exit 1
 
       - name: Download prod training outputs
         id: download
